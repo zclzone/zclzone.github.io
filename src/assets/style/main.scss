@@ -1,0 +1,14 @@
+@import url('./reset.scss');
+
+:root {
+  --main-color: #2b4c59; //主色，最深
+  --secondary-color: #316c72; //次色，稍浅色
+  --light-color: #84a59d; //浅色
+  --front-color: #fff; //前景色
+  --bg-color: #f3f3f3; //背景色
+}
+
+html,
+body {
+  height: 100%;
+}
