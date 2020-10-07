@@ -7,10 +7,10 @@
       <div class="nav-menu">
         <ul>
           <li class="menu-item">
-            <a href="https://qszone.com/blog">奇思博客</a>
+            <a href="https://qszone.com/blog">奇思笔记</a>
           </li>
           <li class="menu-item">
-            <a href="#">关于本站</a>
+            <a href="https://qszone.com/blog/#/article/关于本站">关于本站</a>
           </li>
         </ul>
       </div>

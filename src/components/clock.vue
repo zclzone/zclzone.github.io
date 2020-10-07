@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 export default {
   name: 'Clock',
   setup() {
@@ -40,17 +40,15 @@ export default {
     const hourDeg = ref(((hh % 12) + mm / 60 + ss / 3600) * 30 + 90)
     const minuteDeg = ref((mm + ss / 60) * 6 + 90)
     const secondDeg = ref(ss * 6 + 90)
-    onMounted(() => {
-      setInterval(() => {
-        time = new Date()
-        hh = time.getHours()
-        mm = time.getMinutes()
-        ss = time.getSeconds()
-        hourDeg.value = ((hh % 12) + mm / 60 + ss / 3600) * 30 + 90
-        minuteDeg.value = (mm + ss / 60) * 6 + 90
-        secondDeg.value = ss * 6 + 90
-      }, 1000)
-    })
+    setInterval(() => {
+      time = new Date()
+      hh = time.getHours()
+      mm = time.getMinutes()
+      ss = time.getSeconds()
+      hourDeg.value = ((hh % 12) + mm / 60 + ss / 3600) * 30 + 90
+      minuteDeg.value = (mm + ss / 60) * 6 + 90
+      secondDeg.value = ss * 6 + 90
+    }, 1000)
 
     return {
       hourDeg,

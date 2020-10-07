@@ -9,7 +9,7 @@
 <script>
 import Clock from '@/components/clock'
 import Search from './search'
-import Favorites from './favorites'
+import Favorites from './favorites/index'
 export default {
   components: {
     Clock,
