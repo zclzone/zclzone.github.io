@@ -21,6 +21,7 @@
 <style scoped lang='scss'>
 .header {
   width: 100%;
+  overflow: hidden;
   .header-nav {
     width: 100%;
     height: 50px;
@@ -29,6 +30,7 @@
     display: flex;
     justify-content: space-between;
     .nav-brand {
+      min-width: 250px;
       a {
         font-size: 24px;
         color: #ddd;

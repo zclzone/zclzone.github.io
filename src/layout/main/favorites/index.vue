@@ -139,10 +139,9 @@ export default {
         width: 50px;
       }
       input {
-        width: 200px;
+        width: calc(100% - 50px);
         height: 30px;
         border: 1px solid #ddd;
-
         border-radius: 5px;
         padding-left: 10px;
       }
