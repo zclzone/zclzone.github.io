@@ -1,3 +1,7 @@
+import { getOauthUrl } from '@/utils/oauth-util'
+import { getToken, getUser } from '@/utils/cookie-util'
+import { giteeIssue } from '@/utils/gitee-issue'
+
 const state = () => {
   return {
     favorite: {
@@ -49,6 +53,34 @@ const state = () => {
       this.favorite = favorite
       this.showAdd = true
     },
+    async syncToLocal() {
+      if (!getToken()) {
+        window.name = location.href
+        location.href = getOauthUrl()
+        return
+      }
+      const issue = await giteeIssue.getIssueByTitle(`QSZONE-${getUser()}`)
+      if (!issue) {
+        alert('您云端还没有同步数据，请先上传至云端')
+      } else {
+        alert(`同步成功：${issue.number}`)
+        localStorage.setItem('favorites', issue.body)
+        this.favorites = JSON.parse(issue.body)
+      }
+    },
+    async syncToRemote() {
+      if (!getToken() || !getUser()) {
+        window.name = location.href
+        location.href = getOauthUrl()
+        return
+      }
+      const res = await giteeIssue.addIssue(`QSZONE-${getUser()}`, localStorage.getItem('favorites'))
+      if (res.status === 'OK') {
+        alert(`同步成功：${res.msg}`)
+      } else {
+        console.error(res.msg)
+      }
+    }
   }
 }
 

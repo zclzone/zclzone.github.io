@@ -1,5 +1,15 @@
 <template>
   <div class="favorites-container">
+    <div class="sync-box">
+      <div class="sync-item" @click="syncToLocal">
+        <css-icon icon="icon-refresh" />
+        <span>云端同步到本地</span>
+      </div>
+      <div class="sync-item" @click="syncToRemote">
+        <css-icon icon="icon-refresh" />
+        <span>本地同步到云端</span>
+      </div>
+    </div>
     <ul class="favorites-box">
       <li class="favorites-item" v-for="item in favorites" :key="item">
         <a :href="item.url" @contextmenu.prevent="currentFavo=item" target="_blank">
@@ -30,12 +40,15 @@
         <input type="text" v-model="favorite.img" />
       </div>
       <button @click="addFavorites">保存</button>
-      <div class="close" @click="showAdd = false">X</div>
+      <div class="close" @click="showAdd = false">
+        <css-icon icon="icon-close" />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import CssIcon from '@/components/css-icon'
 import { reactive, toRefs } from 'vue'
 import { state } from './favorites'
 export default {
@@ -51,15 +64,37 @@ export default {
       ...toRefs(favoState),
     }
   },
+  components: {
+    CssIcon,
+  },
 }
 </script>
 
 <style lang="scss" scoped>
 .favorites-container {
   height: 450px;
-  margin-top: 40px;
+  margin-top: 20px;
   width: 100%;
   overflow: hidden;
+  .sync-box {
+    display: flex;
+    justify-content: center;
+    .sync-item {
+      display: flex;
+      padding: 0 20px;
+      flex-direction: column;
+      align-items: center;
+      font-size: 12px;
+      color: #ddd;
+      cursor: pointer;
+      &:hover {
+        color: #fff;
+      }
+      .icon-refresh {
+        font-size: 14px;
+      }
+    }
+  }
   .favorites-box {
     width: 80%;
     max-width: 800px;
@@ -162,9 +197,8 @@ export default {
     }
     .close {
       position: absolute;
-      right: 30px;
-      top: 30px;
-      font-size: 20px;
+      right: 25px;
+      top: 25px;
       color: #ddd;
       cursor: pointer;
       &:hover {
