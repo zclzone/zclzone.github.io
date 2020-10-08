@@ -62,4 +62,23 @@ i {
   left: 75%;
   top: 20%;
 }
+
+.icon-copy::before {
+  width: 0.7em;
+  height: 0.8em;
+  border: 2px solid;
+  border-bottom-color: transparent;
+  border-right-color: transparent;
+  border-radius: 0.1em;
+  left: 40%;
+  top: 40%;
+}
+.icon-copy::after {
+  width: 0.7em;
+  height: 0.8em;
+  border: 2px solid;
+  border-radius: 0.1em;
+  left: 60%;
+  top: 60%;
+}
 </style>

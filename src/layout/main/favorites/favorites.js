@@ -54,12 +54,19 @@ const state = () => {
       this.showAdd = true
     },
     async syncToLocal() {
-      if (!getToken()) {
+      const access_token = getToken()
+      const userJson = getUser()
+      if (!access_token || !userJson) {
         window.name = location.href
         location.href = getOauthUrl()
         return
       }
-      const issue = await giteeIssue.getIssueByTitle(`QSZONE-${getUser()}`)
+      const owner = JSON.parse(userJson).login
+      const hasRepo = await giteeIssue.checkRepo(owner)
+      if (!hasRepo) {
+        return alert('请先初始化收藏夹')
+      }
+      const issue = await giteeIssue.getIssueByTitle(access_token, owner, `QSZONE-${owner}`)
       if (!issue) {
         alert('您云端还没有同步数据，请先上传至云端')
       } else {
@@ -69,17 +76,36 @@ const state = () => {
       }
     },
     async syncToRemote() {
-      if (!getToken() || !getUser()) {
+      const access_token = getToken()
+      const userJson = getUser()
+      if (!access_token || !userJson) {
         window.name = location.href
         location.href = getOauthUrl()
         return
       }
-      const res = await giteeIssue.addIssue(`QSZONE-${getUser()}`, localStorage.getItem('favorites'))
+      const owner = JSON.parse(userJson).login
+      const hasRepo = await giteeIssue.checkRepo(owner)
+      if (!hasRepo) {
+        return alert('请先初始化收藏夹')
+      }
+      const res = await giteeIssue.addIssue(access_token, owner, `QSZONE-${owner}`, localStorage.getItem('favorites'))
       if (res.status === 'OK') {
         alert(`同步成功：${res.msg}`)
       } else {
         console.error(res.msg)
       }
+    },
+    async forkRepo() {
+      const access_token = getToken()
+      const userJson = getUser()
+      if (!access_token || !userJson) {
+        window.name = location.href
+        location.href = getOauthUrl()
+        return
+      }
+      const owner = JSON.parse(userJson).login
+      const res = await giteeIssue.forkRepo(access_token, owner)
+      alert(res.msg)
     }
   }
 }

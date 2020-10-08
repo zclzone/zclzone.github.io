@@ -28,6 +28,6 @@ export async function getUserInfo(access_token) {
   if (err) {
     return null
   }
-  const { login } = res.data
-  return setUser(login)
+  const { avatar_url, email, id, name, login, html_url } = res.data
+  return setUser({ avatar_url, email, id, name, login, html_url })
 }

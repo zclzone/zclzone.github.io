@@ -5,6 +5,10 @@
         <css-icon icon="icon-refresh" />
         <span>云端同步到本地</span>
       </div>
+      <div class="sync-item" @click="forkRepo">
+        <css-icon icon="icon-copy" />
+        <span>初始化收藏夹</span>
+      </div>
       <div class="sync-item" @click="syncToRemote">
         <css-icon icon="icon-refresh" />
         <span>本地同步到云端</span>
@@ -90,8 +94,10 @@ export default {
       &:hover {
         color: #fff;
       }
-      .icon-refresh {
+      .icon-refresh,
+      .icon-copy {
         font-size: 14px;
+        margin-bottom: 5px;
       }
     }
   }
