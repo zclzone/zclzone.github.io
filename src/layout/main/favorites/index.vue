@@ -122,7 +122,6 @@ export default {
       padding: 5px;
       width: 100px;
       color: #fff;
-      overflow: hidden;
       text-align: center;
       position: relative;
       &:hover {
