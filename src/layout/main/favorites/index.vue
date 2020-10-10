@@ -76,16 +76,15 @@ export default {
 
 <style lang="scss" scoped>
 .favorites-container {
-  height: 450px;
   margin-top: 20px;
   width: 100%;
-  overflow: hidden;
   .sync-box {
     display: flex;
     justify-content: center;
     .sync-item {
       display: flex;
       padding: 0 20px;
+      text-align: center;
       flex-direction: column;
       align-items: center;
       font-size: 12px;
@@ -104,13 +103,26 @@ export default {
   .favorites-box {
     width: 80%;
     max-width: 800px;
-    margin: 0 auto;
+    min-width: 320px;
+    padding-bottom: 20px;
+    height: calc(100vh - 450px);
+    margin: 20px auto;
+    text-align: center;
+    overflow: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
     display: flex;
     flex-wrap: wrap;
+    align-content: flex-start;
     justify-content: center;
+    &::-webkit-scrollbar {
+      display: none;
+    }
     .favorites-item {
-      padding: 15px;
+      padding: 5px;
+      width: 100px;
       color: #fff;
+      overflow: hidden;
       text-align: center;
       position: relative;
       &:hover {
