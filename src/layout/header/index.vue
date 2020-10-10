@@ -31,11 +31,17 @@
     justify-content: space-between;
     .nav-brand {
       min-width: 250px;
+      @media screen and (max-width: 600px) {
+        & {
+          display: none;
+        }
+      }
       a {
         font-size: 24px;
         color: #ddd;
       }
     }
+
     .nav-menu {
       font-size: 16px;
       .menu-item {

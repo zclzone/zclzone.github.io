@@ -60,13 +60,18 @@ export default {
 </script>
 
 
-<style scoped>
+<style lang="scss" scoped>
 .clock-container {
   width: 200px;
   height: 200px;
   background: #fff;
   border-radius: 50%;
   margin: 0 auto;
+  @media screen and (max-width: 600px) {
+    & {
+      display: none;
+    }
+  }
 }
 .clock-container .panel-container {
   height: 100%;

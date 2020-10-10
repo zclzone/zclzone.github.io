@@ -78,12 +78,13 @@ export default {
 .favorites-container {
   margin-top: 20px;
   width: 100%;
+  min-width: 320px;
   .sync-box {
     display: flex;
     justify-content: center;
     .sync-item {
       display: flex;
-      padding: 0 20px;
+      padding: 0 8px;
       text-align: center;
       flex-direction: column;
       align-items: center;
@@ -101,20 +102,24 @@ export default {
     }
   }
   .favorites-box {
-    width: 80%;
-    max-width: 800px;
-    min-width: 320px;
-    padding-bottom: 20px;
+    width: 100%;
+    max-width: 1070px;
     height: calc(100vh - 450px);
-    margin: 20px auto;
+    padding: 0 20px 25px;
+    margin: 20px auto 0;
     text-align: center;
-    overflow: auto;
+    overflow: scroll;
     scrollbar-width: none;
     -ms-overflow-style: none;
     display: flex;
     flex-wrap: wrap;
     align-content: flex-start;
     justify-content: center;
+    @media screen and (max-width: 600px) {
+      & {
+        height: calc(100vh - 250px);
+      }
+    }
     &::-webkit-scrollbar {
       display: none;
     }
@@ -122,8 +127,8 @@ export default {
       padding: 5px;
       width: 100px;
       color: #fff;
-      text-align: center;
       position: relative;
+      margin-bottom: 10px;
       &:hover {
         a {
           color: #333;
