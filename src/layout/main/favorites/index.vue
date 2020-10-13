@@ -15,7 +15,7 @@
       </div>
     </div>
     <ul class="favorites-box">
-      <li class="favorites-item" v-for="item in favorites" :key="item">
+      <li class="favorites-item" v-for="item in favorites.common" :key="item">
         <a :href="item.url" @contextmenu.prevent="currentFavo=item" target="_blank">
           <img v-if="item.img" :src="item.img" />
           <span v-else>{{item.title[0]}}</span>
@@ -108,20 +108,20 @@ export default {
     padding: 0 20px 25px;
     margin: 20px auto 0;
     text-align: center;
-    overflow: scroll;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
     display: flex;
     flex-wrap: wrap;
     align-content: flex-start;
     justify-content: center;
+    overflow: scroll;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
     @media screen and (max-width: 600px) {
       & {
         height: calc(100vh - 250px);
       }
-    }
-    &::-webkit-scrollbar {
-      display: none;
     }
     .favorites-item {
       padding: 5px;
