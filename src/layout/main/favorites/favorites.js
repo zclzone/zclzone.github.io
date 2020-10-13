@@ -104,12 +104,15 @@ const state = () => {
     },
     addFavorites() {
       this.showAdd = false
-      if (!this.favorite || !this.favorite.title || !this.favorite.url) return
-      const index = this.favorites.findIndex(item => item.seq === this.favorite.seq && item.title === this.favorite.title)
+      if (!this.favorite || !this.favorite.title || !this.favorite.url) {
+        this.cancleAdd()
+        return
+      }
+      const index = this.favorites.common.findIndex(item => item.seq === this.favorite.seq && item.title === this.favorite.title)
       if (index !== -1) {
-        this.favorites[index] = this.favorite
+        this.favorites.common[index] = this.favorite
       } else {
-        this.favorites.push({ ...this.favorite, seq: this.favorites.length + 1 })
+        this.favorites.common.push({ ...this.favorite, seq: this.favorites.length + 1 })
       }
       localStorage.setItem('favorites', JSON.stringify(this.favorites))
       this.favorite = {
@@ -120,12 +123,21 @@ const state = () => {
       }
     },
     removeFavorites(favorite) {
-      this.favorites.splice(this.favorites.indexOf(favorite), 1)
+      this.favorites.common.splice(this.favorites.common.indexOf(favorite), 1)
       localStorage.setItem('favorites', JSON.stringify(this.favorites))
     },
     updateFavorites(favorite) {
       this.favorite = favorite
       this.showAdd = true
+    },
+    cancleAdd() {
+      this.showAdd = false
+      this.favorite = {
+        seq: '',
+        title: '',
+        url: '',
+        img: '',
+      }
     },
     async syncToLocal() {
       const access_token = getToken()

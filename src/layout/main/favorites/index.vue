@@ -44,7 +44,7 @@
         <input type="text" v-model="favorite.img" />
       </div>
       <button @click="addFavorites">保存</button>
-      <div class="close" @click="showAdd = false">
+      <div class="close" @click="cancleAdd">
         <css-icon icon="icon-close" />
       </div>
     </div>
