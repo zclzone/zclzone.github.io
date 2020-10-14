@@ -139,15 +139,31 @@ const state = () => {
         img: '',
       }
     },
+    // async syncToLocal() {
+    //   const access_token = getToken()
+    //   const userJson = getUser()
+    //   if (!access_token || !userJson) {
+    //     window.name = location.href
+    //     location.href = getOauthUrl()
+    //     return
+    //   }
+    //   const owner = JSON.parse(userJson).login
+    //   const hasRepo = await giteeApi.checkRepo(owner)
+    //   if (!hasRepo) {
+    //     return alert('请先初始化收藏夹')
+    //   }
+    //   const file = await giteeApi.getFile('db/favorites.json', owner)
+    //   if (!file) {
+    //     alert('您云端还没有同步数据，请先上传至云端')
+    //   } else {
+    //     alert(`同步成功`)
+    //     localStorage.setItem('favorites', file.content)
+    //     this.favorites = JSON.parse(file.content)
+    //   }
+    // },
     async syncToLocal() {
-      const access_token = getToken()
       const userJson = getUser()
-      if (!access_token || !userJson) {
-        window.name = location.href
-        location.href = getOauthUrl()
-        return
-      }
-      const owner = JSON.parse(userJson).login
+      let owner = userJson && JSON.parse(userJson).login || prompt('请输入gitee用户名')
       const hasRepo = await giteeApi.checkRepo(owner)
       if (!hasRepo) {
         return alert('请先初始化收藏夹')
@@ -202,7 +218,7 @@ const state = () => {
       if (hasRepo) {
         return alert('已经初始化过了')
       }
-      const res = await giteeApi.forkRepo(access_token, owner)
+      const res = await giteeApi.forkRepo(access_token, 'zclzone', 'gitee-db')
       alert(res.msg)
     }
   }
