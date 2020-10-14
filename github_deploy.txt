@@ -1,0 +1,10 @@
+npm run build
+cd ./dist
+git init
+git checkout --orphan gh-pages
+git add .
+git commit -m 'deploy gh-pages'
+git remote add origin https://github.com/zclzone/zclzone.github.io.git
+git push -f origin gh-pages
+cd ..
+

@@ -109,11 +109,12 @@ const giteeApi = {
     const [err, res] = await to(axios.post(`${baseRepoURL(owner, repo)}/forks`, data))
     if (err) {
       return {
-        status: 'Fail'
+        status: 'Fail',
+        msg: err
       }
     }
     return {
-      status: 'OK'
+      status: 'OK',
     }
   },
 }

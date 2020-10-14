@@ -11,9 +11,10 @@ const state = () => {
       img: '',
     },
     currentFavo: null,
+    currentFavoType: '常用收藏栏',
     showAdd: false,
     favorites: {
-      common: [
+      '常用收藏栏': [
         {
           seq: 1,
           title: "奇思笔记",
@@ -22,72 +23,24 @@ const state = () => {
         },
         {
           seq: 2,
-          title: "背景素材",
-          url: "https://www.hituyu.com",
-          img: ""
-        },
-        {
-          seq: 3,
-          title: "码力全开",
-          url: "https://www.maliquankai.com",
-          img: "https://maliquankai.oss-cn-shenzhen.aliyuncs.com/favicon.ico"
-        },
-        {
-          seq: 4,
-          title: "张鑫旭",
-          url: "https://www.zhangxinxu.com/wordpress",
-          img: "https://www.zhangxinxu.com/favicon.ico"
-        },
-        {
-          seq: 5,
-          title: "果汁音乐",
-          url: "http://guozhivip.com/yinyue",
-          img: ""
-        },
-        {
-          seq: 6,
-          title: "30秒代码",
-          url: "https://www.30secondsofcode.org/",
-          img: "https://www.30secondsofcode.org/favicon-32x32.png"
-        },
-        {
-          seq: 7,
-          title: "哔哩哔哩",
-          url: "https://www.bilibili.com",
-          img: "https://www.bilibili.com/favicon.ico"
-        },
-        {
-          seq: 8,
-          title: "ToDoList",
-          url: "https://lin-xin.gitee.io/example/notepad/",
-          img: "https://lin-xin.gitee.io/favicon.ico"
-        },
-        {
-          seq: 9,
-          title: "图说设计模式",
-          url: "https://design-patterns.readthedocs.io/zh_CN/latest/index.html",
-          img: ""
-        },
-        {
-          seq: 10,
           title: "花瓣",
           url: "https://huaban.com/",
           img: ""
         },
         {
-          seq: 11,
+          seq: 3,
           title: "墨刀",
           url: "https://modao.cc/dashboard/me",
           img: ""
         },
         {
-          seq: 12,
+          seq: 4,
           title: "Process On",
           url: "https://processon.com/diagrams",
           img: ""
         },
         {
-          seq: 13,
+          seq: 5,
           title: "Valine",
           url: "https://valine.js.org",
           img: ""
@@ -108,11 +61,13 @@ const state = () => {
         this.cancleAdd()
         return
       }
-      const index = this.favorites.common.findIndex(item => item.seq === this.favorite.seq && item.title === this.favorite.title)
+      this.favorites[this.currentFavoType] = this.favorites[this.currentFavoType] && this.favorites[this.currentFavoType] || []
+      const index = this.favorites[this.currentFavoType].findIndex(item => item.seq === this.favorite.seq && item.title === this.favorite.title)
+      console.log(index)
       if (index !== -1) {
-        this.favorites.common[index] = this.favorite
+        this.favorites[this.currentFavoType][index] = this.favorite
       } else {
-        this.favorites.common.push({ ...this.favorite, seq: this.favorites.length + 1 })
+        this.favorites[this.currentFavoType].push({ ...this.favorite, seq: this.favorites[this.currentFavoType].length + 1 })
       }
       localStorage.setItem('favorites', JSON.stringify(this.favorites))
       this.favorite = {
@@ -123,7 +78,7 @@ const state = () => {
       }
     },
     removeFavorites(favorite) {
-      this.favorites.common.splice(this.favorites.common.indexOf(favorite), 1)
+      this.favorites[this.currentFavoType].splice(this.favorites[this.currentFavoType].indexOf(favorite), 1)
       localStorage.setItem('favorites', JSON.stringify(this.favorites))
     },
     updateFavorites(favorite) {
@@ -139,31 +94,26 @@ const state = () => {
         img: '',
       }
     },
-    // async syncToLocal() {
-    //   const access_token = getToken()
-    //   const userJson = getUser()
-    //   if (!access_token || !userJson) {
-    //     window.name = location.href
-    //     location.href = getOauthUrl()
-    //     return
-    //   }
-    //   const owner = JSON.parse(userJson).login
-    //   const hasRepo = await giteeApi.checkRepo(owner)
-    //   if (!hasRepo) {
-    //     return alert('请先初始化收藏夹')
-    //   }
-    //   const file = await giteeApi.getFile('db/favorites.json', owner)
-    //   if (!file) {
-    //     alert('您云端还没有同步数据，请先上传至云端')
-    //   } else {
-    //     alert(`同步成功`)
-    //     localStorage.setItem('favorites', file.content)
-    //     this.favorites = JSON.parse(file.content)
-    //   }
-    // },
+    async getFavorites(owner) {
+      if (!owner || !confirm('此操作将会覆盖您本地收藏，请确保已将本地收藏同步到云端，继续？')) return
+      const file = await giteeApi.getFile('db/favorites.json', owner)
+      if (!file) {
+        alert('没有数据')
+      } else {
+        localStorage.setItem('favorites', file.content)
+        this.favorites = JSON.parse(file.content)
+      }
+    },
     async syncToLocal() {
+      const access_token = getToken()
       const userJson = getUser()
-      let owner = userJson && JSON.parse(userJson).login || prompt('请输入gitee用户名')
+      if ((!access_token || !userJson) && confirm('此操作需要您登录gitee账号并授权，是否继续？')) {
+        window.name = location.href
+        location.href = getOauthUrl()
+        return
+      }
+      const owner = userJson && JSON.parse(userJson).login
+      if (!owner || !confirm('此操作将会覆盖您本地收藏夹，确定同步？')) return
       const hasRepo = await giteeApi.checkRepo(owner)
       if (!hasRepo) {
         return alert('请先初始化收藏夹')
@@ -181,10 +131,12 @@ const state = () => {
       const access_token = getToken()
       const userJson = getUser()
       if (!access_token || !userJson) {
+        if (!confirm('此操作需要您登录gitee账号并授权，是否继续？')) return
         window.name = location.href
         location.href = getOauthUrl()
         return
       }
+      if (!confirm('确认同步到云端？')) return
       const owner = JSON.parse(userJson).login
       const hasRepo = await giteeApi.checkRepo(owner)
       if (!hasRepo) {
@@ -208,7 +160,7 @@ const state = () => {
     async forkRepo() {
       const access_token = getToken()
       const userJson = getUser()
-      if (!access_token || !userJson) {
+      if ((!access_token || !userJson) && confirm('此操作需要您登录gitee账号并授权，是否继续？')) {
         window.name = location.href
         location.href = getOauthUrl()
         return
@@ -219,6 +171,9 @@ const state = () => {
         return alert('已经初始化过了')
       }
       const res = await giteeApi.forkRepo(access_token, 'zclzone', 'gitee-db')
+      if (res.status == 'OK') {
+        return alert('初始化成功！')
+      }
       alert(res.msg)
     }
   }

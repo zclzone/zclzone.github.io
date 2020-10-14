@@ -1,21 +1,38 @@
 <template>
   <div class="favorites-container">
     <div class="sync-box">
-      <div class="sync-item" @click="syncToLocal">
-        <css-icon icon="icon-refresh" />
-        <span>云端同步到本地</span>
+      <div class="sync-item" @click="getFavorites('zclzone')">
+        <css-icon icon="icon-bookmark" />
+        <span>奇思收藏夹</span>
       </div>
       <div class="sync-item" @click="forkRepo">
-        <css-icon icon="icon-copy" />
+        <css-icon icon="icon-refresh" />
         <span>初始化收藏夹</span>
       </div>
+      <div class="sync-item" @click="syncToLocal">
+        <css-icon icon="icon-download" />
+        <span>云端同步到本地</span>
+      </div>
+
       <div class="sync-item" @click="syncToRemote">
-        <css-icon icon="icon-refresh" />
+        <css-icon icon="icon-upload" />
         <span>本地同步到云端</span>
       </div>
     </div>
     <ul class="favorites-box">
-      <li class="favorites-item" v-for="item in favorites.common" :key="item">
+      <li :class="{'favorites-item':true,'current':currentFavoType === '常用收藏栏'}">
+        <a href="#" @click.prevent="currentFavoType = '常用收藏栏'">
+          <img src="@/assets/imgs/folder.png" />
+        </a>
+        <span>常用收藏栏</span>
+      </li>
+      <li :class="{'favorites-item':true,'current':currentFavoType === '其他收藏栏'}">
+        <a href="#" @click.prevent="currentFavoType = '其他收藏栏'">
+          <img src="@/assets/imgs/folder.png" />
+        </a>
+        <span>其他收藏栏</span>
+      </li>
+      <li class="favorites-item" v-for="item in favorites[currentFavoType]" :key="item">
         <a :href="item.url" @contextmenu.prevent="currentFavo=item" target="_blank">
           <img v-if="item.img" :src="item.img" />
           <span v-else>{{item.title[0]}}</span>
@@ -29,6 +46,18 @@
       <li class="favorites-item">
         <a href="#" @click.prevent="showAdd = true">+</a>
       </li>
+      <i class="blank"></i>
+      <i class="blank"></i>
+      <i class="blank"></i>
+      <i class="blank"></i>
+      <i class="blank"></i>
+      <i class="blank"></i>
+      <i class="blank"></i>
+      <i class="blank"></i>
+      <i class="blank"></i>
+      <i class="blank"></i>
+      <i class="blank"></i>
+      <i class="blank"></i>
     </ul>
     <div class="add-box" v-if="showAdd">
       <div class="input-item">
@@ -95,7 +124,11 @@ export default {
         color: #fff;
       }
       .icon-refresh,
-      .icon-copy {
+      .icon-copy,
+      .icon-share,
+      .icon-download,
+      .icon-upload,
+      .icon-bookmark {
         font-size: 14px;
         margin-bottom: 5px;
       }
@@ -103,15 +136,15 @@ export default {
   }
   .favorites-box {
     width: 100%;
-    max-width: 1070px;
+    max-width: 960px;
     height: calc(100vh - 450px);
     padding: 0 20px 25px;
-    margin: 20px auto 0;
+    margin: 30px auto 0;
     text-align: center;
     display: flex;
     flex-wrap: wrap;
     align-content: flex-start;
-    justify-content: center;
+    justify-content: space-evenly;
     overflow: scroll;
     scrollbar-width: none;
     -ms-overflow-style: none;
@@ -135,6 +168,11 @@ export default {
           background: rgba(#fff, 0.6);
         }
       }
+      &.current {
+        a {
+          background: rgba(#fff, 0.8);
+        }
+      }
       a {
         display: block;
         width: 70px;
@@ -148,7 +186,7 @@ export default {
         background: rgba(#fff, 0.3);
         transition: 0.6s all;
         img {
-          border-radius: 50%;
+          border-radius: 5px;
           width: 100%;
         }
       }
@@ -176,6 +214,9 @@ export default {
           }
         }
       }
+    }
+    .blank {
+      width: 100px;
     }
   }
   .add-box {
