@@ -158,4 +158,46 @@ i {
   -ms-transform: translate(-50%, 0.2em) rotate(-45deg) skew(15deg, 15deg);
   transform: translate(-50%, 0.2em) rotate(-45deg) skew(15deg, 15deg);
 }
+
+.icon-forward::before {
+  height: 0.65em;
+  width: 0.65em;
+  border-style: solid;
+  border-width: 2px 0 0 2px;
+  -ms-transform: translate(-50%, -50%) rotate(135deg);
+  transform: translate(-50%, -50%) rotate(135deg);
+}
+.icon-forward::after {
+  width: 0.8em;
+  border-top: 2px solid;
+  left: 45%;
+}
+
+.icon-right::before {
+  border: 0.2em solid transparent;
+  border-left-color: currentColor;
+  -ms-transform: translate(-25%, -50%);
+  transform: translate(-25%, -50%);
+}
+
+.icon-down::before {
+  border: 0.2em solid transparent;
+  border-top-color: currentColor;
+  -ms-transform: translate(-50%, -25%);
+  transform: translate(-50%, -25%);
+}
+
+.icon-top::before {
+  border: 0.2em solid transparent;
+  border-bottom-color: currentColor;
+  -ms-transform: translate(-50%, -75%);
+  transform: translate(-50%, -75%);
+}
+
+.icon-left::before {
+  border: 0.2em solid transparent;
+  border-right-color: currentColor;
+  -ms-transform: translate(-50%, -75%);
+  transform: translate(-50%, -75%);
+}
 </style>

@@ -7,46 +7,84 @@ const state = () => {
     favorite: {
       seq: '',
       title: '',
+      type: '',
       url: '',
       img: '',
     },
-    currentFavo: null,
-    currentFavoType: '常用收藏栏',
-    showAdd: false,
-    favorites: {
-      '常用收藏栏': [
-        {
-          seq: 1,
-          title: "奇思笔记",
-          url: "https://qszone.com/blog",
-          img: ""
-        },
-        {
-          seq: 2,
-          title: "花瓣",
-          url: "https://huaban.com/",
-          img: ""
-        },
-        {
-          seq: 3,
-          title: "墨刀",
-          url: "https://modao.cc/dashboard/me",
-          img: ""
-        },
-        {
-          seq: 4,
-          title: "Process On",
-          url: "https://processon.com/diagrams",
-          img: ""
-        },
-        {
-          seq: 5,
-          title: "Valine",
-          url: "https://valine.js.org",
-          img: ""
-        }
-      ]
+    oprOption: {
+      left: 0,
+      top: 0,
+      isShow: false
     },
+    favoMenu: [],
+    showAdd: false,
+    favorites: [
+      {
+        seq: 0,
+        type: 'Folder',
+        title: '常用收藏夹',
+        img: '',
+        files: [
+          {
+            seq: 0,
+            type: 'Folder',
+            title: '子收藏夹',
+            img: '',
+            files: [
+              {
+                seq: 0,
+                type: 'Folder',
+                title: '孙收藏夹',
+                img: '',
+                files: []
+              }
+            ]
+          },
+          {
+            seq: 1,
+            type: 'File',
+            title: "奇思笔记",
+            url: "https://qszone.com/blog",
+            img: ""
+          },
+          {
+            seq: 2,
+            type: 'File',
+            title: "花瓣",
+            url: "https://huaban.com/",
+            img: ""
+          },
+          {
+            seq: 3,
+            type: 'File',
+            title: "墨刀",
+            url: "https://modao.cc/dashboard/me",
+            img: ""
+          },
+          {
+            seq: 4,
+            type: 'File',
+            title: "Process On",
+            url: "https://processon.com/diagrams",
+            img: ""
+          },
+          {
+            seq: 5,
+            type: 'File',
+            title: "Valine",
+            url: "https://valine.js.org",
+            img: ""
+          }
+        ]
+      },
+      {
+        seq: 1,
+        type: 'File',
+        title: "奇思笔记",
+        url: "https://qszone.com/blog",
+        img: ""
+      },
+    ],
     initFavorites() {
       const localFavorites = localStorage.getItem('favorites')
       if (localFavorites) {
@@ -57,42 +95,46 @@ const state = () => {
     },
     addFavorites() {
       this.showAdd = false
-      if (!this.favorite || !this.favorite.title || !this.favorite.url) {
+      if (!this.favorite || !this.favorite.title) {
         this.cancleAdd()
         return
       }
-      this.favorites[this.currentFavoType] = this.favorites[this.currentFavoType] && this.favorites[this.currentFavoType] || []
-      const index = this.favorites[this.currentFavoType].findIndex(item => item.seq === this.favorite.seq && item.title === this.favorite.title)
-      console.log(index)
+      let lastFolder = this.favorites
+      for (const item of this.favoMenu) {
+        lastFolder = lastFolder.find((favo) => favo.title === item).files
+      }
+      this.favorite.type = this.favorite.type || 'File'
+      if (this.favorite.type === 'Folder' && !this.favorite.files) {
+        this.favorite.files = []
+      }
+      const index = lastFolder.findIndex(item => item.seq === this.favorite.seq && item.title === this.favorite.title)
       if (index !== -1) {
-        this.favorites[this.currentFavoType][index] = this.favorite
+        lastFolder[index] = this.favorite
       } else {
-        this.favorites[this.currentFavoType].push({ ...this.favorite, seq: this.favorites[this.currentFavoType].length + 1 })
+        lastFolder.push({ ...this.favorite, seq: lastFolder.length })
       }
       localStorage.setItem('favorites', JSON.stringify(this.favorites))
-      this.favorite = {
-        seq: '',
-        title: '',
-        url: '',
-        img: '',
-      }
+      this.favorite = {}
     },
-    removeFavorites(favorite) {
-      this.favorites[this.currentFavoType].splice(this.favorites[this.currentFavoType].indexOf(favorite), 1)
-      localStorage.setItem('favorites', JSON.stringify(this.favorites))
-    },
-    updateFavorites(favorite) {
+    showOpr(favorite, e) {
       this.favorite = favorite
-      this.showAdd = true
+      this.oprOption.isShow = true
+      this.oprOption.left = e.clientX
+      this.oprOption.top = e.clientY
+    },
+    removeFavorites() {
+      let lastFolder = this.favorites
+      for (const item of this.favoMenu) {
+        lastFolder = lastFolder.find((favo) => favo.title === item).files
+      }
+      lastFolder.splice(lastFolder.indexOf(this.favorite), 1)
+      localStorage.setItem('favorites', JSON.stringify(this.favorites))
+    },
+    updateFavorites() {
     },
     cancleAdd() {
       this.showAdd = false
-      this.favorite = {
-        seq: '',
-        title: '',
-        url: '',
-        img: '',
-      }
+      this.favorite = {}
     },
     async getFavorites(owner) {
       if (!owner || !confirm('此操作将会覆盖您本地收藏，请确保已将本地收藏同步到云端，继续？')) return

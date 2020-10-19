@@ -11,66 +11,90 @@
       </div>
       <div class="sync-item" @click="syncToLocal">
         <css-icon icon="icon-download" />
-        <span>云端同步到本地</span>
+        <span>云端同步本地</span>
       </div>
 
       <div class="sync-item" @click="syncToRemote">
         <css-icon icon="icon-upload" />
-        <span>本地同步到云端</span>
+        <span>本地同步云端</span>
       </div>
     </div>
-    <ul class="favorites-box">
-      <li :class="{'favorites-item':true,'current':currentFavoType === '常用收藏栏'}">
-        <a href="#" @click.prevent="currentFavoType = '常用收藏栏'">
-          <img src="@/assets/imgs/folder.png" />
-        </a>
-        <span>常用收藏栏</span>
-      </li>
-      <li :class="{'favorites-item':true,'current':currentFavoType === '其他收藏栏'}">
-        <a href="#" @click.prevent="currentFavoType = '其他收藏栏'">
-          <img src="@/assets/imgs/folder.png" />
-        </a>
-        <span>其他收藏栏</span>
-      </li>
-      <li class="favorites-item" v-for="item in favorites[currentFavoType]" :key="item">
-        <a :href="item.url" @contextmenu.prevent="currentFavo=item" target="_blank">
-          <img v-if="item.img" :src="item.img" />
-          <span v-else>{{item.title[0]}}</span>
-        </a>
-        <span>{{item.title}}</span>
-        <div class="favorite-opr" v-show="item === currentFavo">
-          <div class="opr-item" @click="removeFavorites(item)">删除</div>
-          <div class="opr-item" @click="updateFavorites(item)">修改</div>
-        </div>
-      </li>
-      <li class="favorites-item">
-        <a href="#" @click.prevent="showAdd = true">+</a>
-      </li>
-      <i class="blank"></i>
-      <i class="blank"></i>
-      <i class="blank"></i>
-      <i class="blank"></i>
-      <i class="blank"></i>
-      <i class="blank"></i>
-      <i class="blank"></i>
-      <i class="blank"></i>
-      <i class="blank"></i>
-      <i class="blank"></i>
-      <i class="blank"></i>
-      <i class="blank"></i>
-    </ul>
-    <div class="add-box" v-if="showAdd">
+    <div class="favorites-nav">
+      <ul class="favorites-menu">
+        <li class="menu-item">
+          <span @click="favoMenu.length = 0">收藏栏</span>
+          <css-icon icon="icon-right" v-if="favoMenu.length" />
+          <css-icon icon="icon-down" v-else></css-icon>
+        </li>
+        <li class="menu-item" v-for="(item,index) in favoMenu" :key="index">
+          <span @click="favoMenu.length = index + 1">{{item}}</span>
+          <css-icon icon="icon-right" v-if="index + 1 < favoMenu.length" />
+          <css-icon icon="icon-down" v-else></css-icon>
+        </li>
+      </ul>
+      <ul class="favorites-box">
+        <li class="favorites-item" v-for="(item,index) in curFavorites" :key="index">
+          <a
+            :href="item.url"
+            @contextmenu.prevent="showOpr(item,$event)"
+            target="_blank"
+            v-if="item.type === 'File'"
+          >
+            <img v-if="item.img" :src="item.img" />
+            <span v-else>{{item.title[0]}}</span>
+          </a>
+          <a
+            href="#"
+            v-else
+            @click.prevent="favoMenu.push(item.title)"
+            @contextmenu.prevent="showOpr(item,$event)"
+          >
+            <img src="@/assets/imgs/folder.png" />
+          </a>
+          <span>{{item.title}}</span>
+        </li>
+        <li class="favorites-item">
+          <a href="#" @click.prevent="showAdd = true">+</a>
+        </li>
+        <i class="blank"></i>
+        <i class="blank"></i>
+        <i class="blank"></i>
+        <i class="blank"></i>
+        <i class="blank"></i>
+        <i class="blank"></i>
+        <i class="blank"></i>
+        <i class="blank"></i>
+        <i class="blank"></i>
+        <i class="blank"></i>
+        <i class="blank"></i>
+        <i class="blank"></i>
+      </ul>
+    </div>
+
+    <div
+      class="favorite-opr"
+      v-show="oprOption.isShow"
+      :style="`left:${oprOption.left}px;top:${oprOption.top}px`"
+    >
+      <div class="opr-item" @click="removeFavorites">删除</div>
+      <div class="opr-item" @click="showAdd=true">修改</div>
+    </div>
+    <div class="add-box" v-show="showAdd">
+      <div class="input-item">
+        <input type="radio" class="radio" name="type" v-model="favorite.type" value="Folder" />文件夹
+        <input type="radio" class="radio" name="type" v-model="favorite.type" value="File" />书签
+      </div>
       <div class="input-item">
         <label>名称</label>
-        <input type="text" v-model="favorite.title" />
+        <input type="text" class="text" v-model="favorite.title" />
       </div>
       <div class="input-item">
         <label>地址</label>
-        <input type="text" v-model="favorite.url" />
+        <input type="text" class="text" v-model="favorite.url" />
       </div>
       <div class="input-item">
         <label>图标</label>
-        <input type="text" v-model="favorite.img" />
+        <input type="text" class="text" v-model="favorite.img" />
       </div>
       <button @click="addFavorites">保存</button>
       <div class="close" @click="cancleAdd">
@@ -91,11 +115,21 @@ export default {
     favoState.initFavorites()
     document.addEventListener('click', (e) => {
       e.stopPropagation()
-      favoState.currentFavo = null
+      // favoState.favorite = null
+      favoState.oprOption.isShow = false
     })
     return {
       ...toRefs(favoState),
     }
+  },
+  computed: {
+    curFavorites() {
+      let curFavorites = this.favorites
+      for (const item of this.favoMenu) {
+        curFavorites = curFavorites.find((favo) => favo.title === item).files
+      }
+      return curFavorites
+    },
   },
   components: {
     CssIcon,
@@ -108,6 +142,8 @@ export default {
   margin-top: 20px;
   width: 100%;
   min-width: 320px;
+  padding-left: 15px;
+  padding-right: 15px;
   .sync-box {
     display: flex;
     justify-content: center;
@@ -134,89 +170,107 @@ export default {
       }
     }
   }
-  .favorites-box {
+  .favorites-nav {
+    box-shadow: 0 0 3px #fff;
+    border-radius: 8px;
     width: 100%;
     max-width: 960px;
-    height: calc(100vh - 450px);
-    padding: 0 20px 25px;
-    margin: 30px auto 0;
-    text-align: center;
-    display: flex;
-    flex-wrap: wrap;
-    align-content: flex-start;
-    justify-content: space-evenly;
-    overflow: scroll;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    &::-webkit-scrollbar {
-      display: none;
-    }
-    @media screen and (max-width: 600px) {
-      & {
-        height: calc(100vh - 250px);
-      }
-    }
-    .favorites-item {
-      padding: 5px;
-      width: 100px;
-      color: #fff;
-      position: relative;
-      margin-bottom: 10px;
-      &:hover {
-        a {
-          color: #333;
-          background: rgba(#fff, 0.6);
+    margin: 15px auto;
+    padding: 5px 10px;
+    .favorites-menu {
+      width: 100%;
+      display: flex;
+      justify-content: flex-start;
+      color: #ddd;
+      margin: 5px 0;
+      .menu-item {
+        font-size: 14px;
+        margin-right: 5px;
+        cursor: pointer;
+        &:hover {
+          color: #fff;
         }
       }
-      &.current {
-        a {
-          background: rgba(#fff, 0.8);
+    }
+    .favorites-box {
+      width: 100%;
+      max-height: calc(100vh - 500px);
+      text-align: center;
+      display: flex;
+      flex-wrap: wrap;
+      align-content: flex-start;
+      justify-content: space-evenly;
+      overflow: scroll;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+      @media screen and (max-width: 600px) {
+        & {
+          max-height: calc(100vh - 250px);
         }
       }
-      a {
-        display: block;
-        width: 70px;
-        height: 70px;
-        margin: 0 auto 10px;
-        padding: 15px;
-        line-height: 40px;
-        font-size: 28px;
+      .favorites-item {
+        padding: 5px;
+        width: 100px;
         color: #fff;
-        border-radius: 8px;
-        background: rgba(#fff, 0.3);
-        transition: 0.6s all;
-        img {
-          border-radius: 5px;
-          width: 100%;
+        position: relative;
+        margin-bottom: 10px;
+        &:hover {
+          a {
+            color: #333;
+            background: rgba(#fff, 0.6);
+          }
+        }
+        &.current {
+          a {
+            background: rgba(#fff, 0.8);
+          }
+        }
+        a {
+          display: block;
+          width: 70px;
+          height: 70px;
+          margin: 0 auto 10px;
+          padding: 15px;
+          line-height: 40px;
+          font-size: 28px;
+          color: #fff;
+          border-radius: 8px;
+          background: rgba(#fff, 0.3);
+          transition: 0.6s all;
+          img {
+            border-radius: 5px;
+            width: 100%;
+          }
         }
       }
-      .favorite-opr {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        color: #333;
-        background: #fff;
-        border-radius: 8px;
-        width: 70px;
-        .opr-item {
-          padding: 8px 15px;
-          cursor: pointer;
-          &:first-child {
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
-          }
-          &:last-child {
-            border-bottom-left-radius: 8px;
-            border-bottom-right-radius: 8px;
-          }
-          &:hover {
-            background: #ddd;
-          }
-        }
+      .blank {
+        width: 100px;
       }
     }
-    .blank {
-      width: 100px;
+  }
+  .favorite-opr {
+    position: absolute;
+    color: #333;
+    background: #fff;
+    border-radius: 8px;
+    width: 70px;
+    .opr-item {
+      padding: 8px 15px;
+      cursor: pointer;
+      &:first-child {
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+      }
+      &:last-child {
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+      }
+      &:hover {
+        background: #ddd;
+      }
     }
   }
   .add-box {
@@ -231,12 +285,23 @@ export default {
     text-align: center;
     .input-item {
       line-height: 45px;
+      font-size: 16px;
       label {
         text-align: left;
         display: inline-block;
         width: 50px;
       }
-      input {
+      .radio {
+        border: 2px solid #ddd;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        margin: 0 10px;
+        &:checked {
+          background-color: #666;
+        }
+      }
+      .text {
         width: calc(100% - 50px);
         height: 30px;
         border: 1px solid #ddd;
