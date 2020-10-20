@@ -115,7 +115,7 @@ export default {
     favoState.initFavorites()
     document.addEventListener('click', (e) => {
       e.stopPropagation()
-      // favoState.favorite = null
+      favoState.favorite = { seq: '', title: '', type: '', url: '', img: '' }
       favoState.oprOption.isShow = false
     })
     return {
