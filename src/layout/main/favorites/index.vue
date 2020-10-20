@@ -54,7 +54,7 @@
           <span>{{item.title}}</span>
         </li>
         <li class="favorites-item">
-          <a href="#" @click.prevent="showAdd = true">+</a>
+          <a href="#" @click.prevent="favorite = {};showAdd = true">+</a>
         </li>
         <i class="blank"></i>
         <i class="blank"></i>
@@ -76,7 +76,7 @@
       v-show="oprOption.isShow"
       :style="`left:${oprOption.left}px;top:${oprOption.top}px`"
     >
-      <div class="opr-item" @click="removeFavorites">删除</div>
+      <div class="opr-item" @click.stop="removeFavorites">删除</div>
       <div class="opr-item" @click="showAdd=true">修改</div>
     </div>
     <div class="add-box" v-show="showAdd">
@@ -115,7 +115,6 @@ export default {
     favoState.initFavorites()
     document.addEventListener('click', (e) => {
       e.stopPropagation()
-      favoState.favorite = { seq: '', title: '', type: '', url: '', img: '' }
       favoState.oprOption.isShow = false
     })
     return {

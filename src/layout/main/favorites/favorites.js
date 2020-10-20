@@ -4,13 +4,7 @@ import { giteeApi } from '@/utils/gitee-api'
 
 const state = () => {
   return {
-    favorite: {
-      seq: '',
-      title: '',
-      type: '',
-      url: '',
-      img: '',
-    },
+    favorite: {},
     oprOption: {
       left: 0,
       top: 0,
@@ -123,6 +117,7 @@ const state = () => {
       this.oprOption.top = e.clientY
     },
     removeFavorites() {
+      this.oprOption.isShow = false
       let lastFolder = this.favorites
       for (const item of this.favoMenu) {
         lastFolder = lastFolder.find((favo) => favo.title === item).files
