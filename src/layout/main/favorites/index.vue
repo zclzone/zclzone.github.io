@@ -256,6 +256,7 @@ export default {
     background: #fff;
     border-radius: 8px;
     width: 70px;
+    transition: all 0.1s;
     .opr-item {
       padding: 8px 15px;
       cursor: pointer;
