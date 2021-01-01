@@ -1,7 +1,7 @@
 <template>
   <app-header></app-header>
   <app-main></app-main>
-  <footer></footer>
+  <app-footer></app-footer>
 </template>
 
 <script>
